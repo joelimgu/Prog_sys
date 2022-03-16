@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
-#define NB_LOOP 2
-#define MAX 6
 
 
 
