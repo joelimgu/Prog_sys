@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 
 #define D 5.0
@@ -46,22 +47,35 @@ int main() {
     int fc = 0;
     double pi = 0;
 
+    struct timeval start_time;
+    gettimeofday(&start_time, 0);
+
     for (int i = 0; i < NB_THREADS; ++i) {
         pthread_create(&threads[i],NULL, throw_arrows,(void *)(&arrows_per_thread));
     }
-    printf("created threads\n");
+    printf("created threads, calculating...\n");
     for (int i = 0; i < NB_THREADS; ++i) {
         int * res = NULL;
         pthread_join(threads[i], (void *)&res);
         results[i] = *res;
         free(res);
     }
-    printf("got responses \n");
     for (int i = 0; i < NB_THREADS; ++i) {
         fc += results[i];
     }
     pi = 4*(double)fc/NB_ARROWS;
+
+    struct timeval end_time;
+    gettimeofday(&end_time, 0);
+
+    long int seconds = end_time.tv_sec - start_time.tv_sec;
+    long int u_seconds = end_time.tv_usec - start_time.tv_usec;
+    if ( u_seconds < 0 ) {
+        u_seconds = 1000000 - u_seconds;
+    }
+
     printf("PI = %f \n", pi);
-//    printf("arrows: %d \n", throw_arrows(&arrows_per_thread)));
+    printf("Took %ld s and %ld us\n", seconds, u_seconds);
+
     return 0;
 }
