@@ -12,7 +12,7 @@
 
 typedef enum {false, true} bool;
 
-double randomFloat(double min, double max){
+double randomFloat(double min, double max) {
     return ((max - min) * ((double)rand() / RAND_MAX)) + min;
 }
 
@@ -54,7 +54,7 @@ int main() {
         pthread_create(&threads[i],NULL, throw_arrows,(void *)(&arrows_per_thread));
     }
     printf("created threads, calculating...\n");
-    for (int i = 0; i < NB_THREADS; ++i) {
+    for (int i = 0; i < NB_THREADS; i++) {
         int * res = NULL;
         pthread_join(threads[i], (void *)&res);
         results[i] = *res;

@@ -24,18 +24,20 @@ void one_func() {
     }
     printf("1: created file\n");
     sleep(1);
+    if (!(rx=open("/tmp/zero_to_one_tube", O_RDONLY))) {
+        printf("pb open\n");
+        exit(-1);
+    }
+    printf("1: opened rx\n");
 
-    if (!(tx = open("/tmp/one_to_zero", O_WRONLY))){
+    if (!(tx = open("/tmp/one_to_zero", O_WRONLY))) {
         printf("pb open\n");
         exit(-1);
     }
     printf("1: opened tx\n");
 
 
-    if (!(rx=open("/tmp/zero_to_one_tube", O_RDONLY))) {
-        printf("pb open\n");
-        exit(-1);
-    }
+
 
     while (val <= TEST_LEN) {
         if (read(rx,&val,4)!=4){
@@ -63,22 +65,19 @@ void zero_func() {
         exit(-1);
     }
     printf("0: created file...\n");
-    printf("0: slept\n");
 
-    if (!(tx = open("/tmp/zero_to_one_tube", O_WRONLY))){
+    if (!(tx = open("/tmp/zero_to_one_tube", O_WRONLY))) {
         printf("pb open\n");
         exit(-1);
     }
     printf("0: opened tx\n");
 
-    int c = 0;
-    while (!(rx=open("/tmp/one_to_zero", O_RDONLY)) || c < 50) {
+    if (!(rx=open("/tmp/one_to_zero", O_RDONLY)) ) {
         printf("pb open\n");
-        sleep(1);
-        c++;
+        printf("0: one_to_zero fifo found!\n");
+        exit(-1);
     }
-    printf("0: one_to_zero fifo found!\n");
-
+    printf("0: opened rx\n");
 
     while (val <= TEST_LEN) {
         if (write(tx,&val,4) != 4) {
@@ -87,12 +86,13 @@ void zero_func() {
         }
 
         val += 1;
-
+        printf("0: wrote %d\n", val);
         if (read(rx,&val,4)!=4){
             printf("pb lec\n");
             exit(-1);
         }
     }
+    printf("end \n");
 }
 
 int main(int argc, char * argv[]) {

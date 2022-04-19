@@ -1,0 +1,3 @@
+temperature temperature 5
+luminosite luminosite 3
+interrupteur interrupteur 2
